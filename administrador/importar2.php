@@ -1,10 +1,3 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Custom Markers</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js" type="text/javascript"></script> 
-    <meta charset="utf-8">
     <style>
       /* Always set the map height explicitly to define the size of the div
        * element that contains the map. */
@@ -146,8 +139,7 @@
 
         }
     </style>
-  </head>
-  <body>
+
     <div>
         
         <form>
@@ -575,5 +567,3 @@
     <script async defer
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCyeNELJuURtBnMQR5Josan3KL7luObvlg&callback=initMap">
     </script>
-  </body>
-</html>

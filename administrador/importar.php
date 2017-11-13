@@ -1,14 +1,5 @@
 <!-- http://ProgramarEnPHP.wordpress.com -->
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>:: Importar de Excel a la Base de Datos ::</title>
-</head>
-
-<body>
-    holas
-    
-
-    <!-- FORMULARIO PARA SOICITAR LA CARGA DEL EXCEL -->
+<!-- FORMULARIO PARA SOICITAR LA CARGA DEL EXCEL -->
     Selecciona el archivo a importar:
     <form name="importa" method="post" action="importar.php" enctype="multipart/form-data" >
         <input type="file" name="excel" />
@@ -68,6 +59,8 @@
         //del excel e ir insertandolos en la BD
         echo "<table>";
         $coordenadas="";
+        $ContratosImportados=array();
+        $miArray = array("manzana"=>"verde", "uva"=>"Morada", "fresa"=>"roja");
         foreach ($_DATOS_EXCEL as $campo => $valor) {
             /*$sql = "INSERT INTO datos VALUES (NULL,'";
             foreach ($valor as $campo2 => $valor2) {
@@ -82,8 +75,12 @@
             echo "<tr>";
             echo "<td>".$valor["nombres"]."</td>";
             echo "<td>".$valor["direccion"]."</td>";
+            $Nrocontrato="";
+            $NombreUsuario="";
+            $TipoIcono="info";
             echo "</tr>";
-            $coordenadas.="{lat: ".$valor["longitud"].", lng: ".$valor["latitud"]."},";
+            $coordenadas="{lat: ".$valor["longitud"].", lng: ".$valor["latitud"]."}";
+            array_push($ContratosImportados,{"position"=>$coordenadas, "type"=>$TipoIcono,"label"=>$Nrocontrato,"nombreMarcador"=>$NombreUsuario});
            // $coordenadas="{lat: -16.4018716666666, lng: -71.5400216666666}";
 
             //echo $valor["direccion"];
@@ -93,78 +90,8 @@
         echo "<strong><center>ARCHIVO IMPORTADO CON EXITO, EN TOTAL $campo REGISTROS Y $errores ERRORES</center></strong>";
         //una vez terminado el proceso borramos el archivo que esta en el servidor el bak_
         unlink($destino);
+        echo json_encode($ContratosImportados);
     }
     ?>
-
-
-    <style>
-      html, body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-        font-family: verdana;
-        font-size: 12px;
-      }
-      #DetallesLocal{
-        width: 300px;
-      }
-      #map {
-        height: 400px;
-        width: 800px;
-      }
-      table{
-        border: none;
-
-      }
-      table tr:hover td{
-        background-color: #fff;
-        color: black;
-      }
-      table td{
-        border: none;
-      }
-    </style>
-    <div id="map"></div>
-    <script>
-
-      function initMap() {
-
-        var map = new google.maps.Map(document.getElementById('map'), {
-          zoom: 3,
-          center: {lat: -28.024, lng: 140.887}
-        });
-
-        // Create an array of alphabetical characters used to label the markers.
-        var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-
-        // Add some markers to the map.
-        // 
-        // Note: The code uses the JavaScript Array.prototype.map() method to
-        // create an array of markers based on a given "locations" array.
-        // The map() method here has nothing to do with the Google Maps API.
-        var markers = locations.map(function(location, i) {
-          return new google.maps.Marker({
-            position: location,
-            label: labels[i % labels.length]
-          });
-            this.addListener('click', function() {
-                marker.setIcon('https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png');
-            });
-        });
-
-        // Add a marker clusterer to manage the markers.
-        var markerCluster = new MarkerClusterer(map, markers,
-            {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
-      }
-      var locations = [
-        <?php echo $coordenadas;?>
-      ]
-    </script>
-    <script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js">
-    </script>
-    <script async defer
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCyeNELJuURtBnMQR5Josan3KL7luObvlg&callback=initMap">
-    </script>
-    <?php echo $coordenadas;?>
 </body>
 </html>
