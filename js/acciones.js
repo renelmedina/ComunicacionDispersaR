@@ -21,3 +21,26 @@ function fnCargaSimple(pagina,mensajeHTML,divprincipal,divmensajero) {
 	$(enlace).css("color","#423E7B");
 	$(enlace).css("font-weight","bold");*/
 }
+function envio_general_forms(formularioid,procesadorphp,capaeventosid,mensajeHTML){
+  var str = new FormData($(formularioid)[0]);
+      $.ajax({
+        type: "POST",
+        url: procesadorphp,
+        data: str,
+        cache: false,
+        contentType: false,
+        processData: false,
+        //mientras enviamos el archivo
+        beforeSend: function(){
+            $(capaeventosid).html(mensajeHTML);
+        },
+        //una vez finalizado correctamente
+        success: function(theResponse) {
+            $(capaeventosid).html(theResponse);
+        },
+          //si ha ocurrido un error
+        error: function(){
+          $(capaeventosid).html("<strong>Error: </strong> Error de envio de datos, vuelve a intentarlo, si el problema persiste comunica al webmaster. este error es de comunicaion de datos con el servidor mediante tecnologia Ajax y Jquery");
+        }
+      });
+}

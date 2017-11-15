@@ -1,10 +1,10 @@
 <?php
-class Conexion extends PDO {
+class ConexionSealDBGeneralidades extends PDO {
    private $tipo_de_base = 'mysql';
    private $host = 'localhost';
-   private $nombre_de_base = 'renelmed_servisoft';
-   private $usuario = 'renelmed_servici';
-   private $contrasena = '10461437449';
+   private $nombre_de_base = 'accsac_seal_gen';
+   private $usuario = 'accsac_root';
+   private $contrasena = '20197454068';
    public function __construct() {
       //Sobreescribo el método constructor de la clase PDO.
       try{
@@ -23,7 +23,7 @@ class PaginaPrincipal{
   //private $rutaFuentes;
   //private $rutaBootstrapComun;
   function __construct(){
-    $this->direccionPagina="http://renel.com/accsac.com/Aplicaciones/seal/comunicaciondispersa";
+    $this->direccionPagina="http://accsac.com/sistemas/seal/comunicaciondispersa";
     $this->rutaImagenes=$this->direccionPagina."/images/";
     $this->rutaJavaScript=$this->direccionPagina."/js/";
     $this->rutaCss=$this->direccionPagina."/css/";
@@ -37,14 +37,14 @@ class PaginaPrincipal{
    ?>
    <head>
       <!-- Bootstrap CSS -->
-      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
-      <script src="https://code.jquery.com/jquery-3.2.1.js"></script>
-      <script src="../js/acciones.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.js"></script>
+    <script src="<?php echo $this->rutaJavaScript; ?>acciones.js"></script>
 
    </head>
    <body>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
-      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
    </body>
    <?php
   }
@@ -74,5 +74,35 @@ class PaginaPrincipal{
       </div>
     <?php
   }
+}
+/*Mostrar mensajes usando la libreria de bootdtrap*/
+function msg_verde($mensajehtml){
+   echo "<div class='alert alert-success' role='alert'>$mensajehtml<button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button></div>";
+}
+function msg_azul($mensajehtml){
+   echo "<div class='alert alert-info' role='alert'>$mensajehtml<button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button></div>";
+}
+function msg_amarillo($mensajehtml){
+   echo "<div class='alert alert-warning' role='alert'>$mensajehtml<button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button></div>";
+}
+function msg_rojo($mensajehtml){
+   echo "<div class='alert alert-danger' role='alert'>$mensajehtml<button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button></div>";
+}
+/*funcion para obtener datos por post y get*/
+function coger_dato_externo($nomvariable){
+   if(isset($_GET[$nomvariable])){
+      $variable_imprimir=$_GET[$nomvariable];
+   }else{
+      if (isset($_POST[$nomvariable])){
+         $variable_imprimir=$_POST[$nomvariable];
+      }else{
+         $variable_imprimir=null;
+      }
+   }
+   return $variable_imprimir;
+}
+/*Funcion que permite escribir en la consola de javascript*/
+function fnConsoloLog($textoplano){
+   echo "<script>console.log($textoplano);</script>";
 }
 ?>

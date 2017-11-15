@@ -75,59 +75,12 @@
                 echo "Error al insertar registro " . $campo;
                 $errores+=1;
             }*/
-            $valor['sector']
-            $valor['zona']
-            $valor['ruta']
-            $valor['hoja']
-            $valor['contrato']
-            $valor['nim']
-            $valor['tipo']
-            $valor['cliente']
-            $valor['direccion']
-            $valor['sed']
-            $valor['longitud']
-            $valor['latitud']
-            $ConexionInventarioSie= new ConexionInventarioSie();
-            $stmt = $ConexionInventarioSie->prepare("call InsertarContrato(
-                                            :varNroContrato,
-                                            :varSectorID,
-                                            :varZonaID,
-                                            :varRutaID,
-                                            :varHoja,
-                                            :varNim,
-                                            :varTipoID,
-                                            :varNombresDuenio,
-                                            :varDireccionMedidor,
-                                            :varSed,
-                                            :varLongitud,
-                                            :varLatitud)");
-            $rows = $stmt->execute(array( ':varNroContrato'=>,
-                                            ':varSectorID'=>,
-                                            ':varZonaID'=>,
-                                            ':varRutaID'=>,
-                                            ':varHoja'=>,
-                                            ':varNim'=>,
-                                            ':varTipoID'=>,
-                                            ':varNombresDuenio'=>,
-                                            ':varDireccionMedidor'=>,
-                                            ':varSed'=>,
-                                            ':varLongitud'=>,
-                                            ':varLatitud'=>));
-            if( $rows > 0 ){
-                msg_verde("<span class='glyphicon glyphicon-ok' aria-hidden='true'></span> Nuevo Cliente Guardado");
-                echo "<script type='text/javascript'>document.getElementById('$FormularioResetear').reset();
-          carga_simple('estadolocal_lista.php','#divPrincipal','#mensajes','Cargando...');
-          </script>";
-            }else {
-              msg_rojo("Por Alguna Razon Desconocida no se pudo guardar este registro intentalo de nuevo.");
-            }
             echo "<tr>";
             echo "<td>".$valor["nombres"]."</td>";
             echo "<td>".$valor["direccion"]."</td>";
             $Nrocontrato="";
             $NombreUsuario="";
             $TipoIcono="info";
-
             echo "</tr>";
             $coordenadas="{lat: ".$valor["longitud"].", lng: ".$valor["latitud"]."}";
             //array_push($coordenadas, array("lat"=>$$valor["longitud"],"lng"=>$valor["latitud"]));
