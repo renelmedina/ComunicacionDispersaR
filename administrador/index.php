@@ -2,8 +2,9 @@
 require_once("../libreria.php");
 //$dbConexion=new Conexion();
 $cabecera=new PaginaPrincipal;
-//echo $cabecera->ArchivosEsenciales();
 echo $cabecera->FrameworkModernos();
+//echo $cabecera->FrameworkComunes();
+echo $cabecera->ArchivosEsenciales();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -32,11 +33,11 @@ echo $cabecera->FrameworkModernos();
             <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Contratos</a>
             <div class="dropdown-menu">
               <a class="dropdown-item" href="#">Tipos de Contrato</a>
-              <a class="dropdown-item" href="#">Zonas</a>
+              <a class="dropdown-item" href="javascript:fnCargaSimple('importar_zonas.php','Cargando Importador','#divPrincipal','#divmensajero');">Zonas</a>
               <a class="dropdown-item" href="#">Sector</a>
-              <a class="dropdown-item" href="#">Ruta</a>
+              <a class="dropdown-item" href="javascript:fnCargaSimple('rutas.php','Cargando Importador','#divPrincipal','#divmensajero');">Ruta</a>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item" href="javascript:fnCargaSimple('importar_zonas.php','Cargando Importador','#divPrincipal','#divmensajero');">Ver contratos-GPS</a>
+              <a class="dropdown-item">Ver contratos-GPS</a>
             </div>
           </li>
           <li class="nav-item">

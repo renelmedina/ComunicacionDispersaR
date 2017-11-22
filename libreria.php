@@ -23,7 +23,7 @@ class PaginaPrincipal{
   //private $rutaFuentes;
   //private $rutaBootstrapComun;
   function __construct(){
-    $this->direccionPagina="http://accsac.com/sistemas/seal/comunicaciondispersa";
+    $this->direccionPagina="http://localhost/clientes/accsac.com/Aplicaciones/seal/comunicaciondispersa";
     $this->rutaImagenes=$this->direccionPagina."/images/";
     $this->rutaJavaScript=$this->direccionPagina."/js/";
     $this->rutaCss=$this->direccionPagina."/css/";
@@ -50,17 +50,17 @@ class PaginaPrincipal{
   }
   public function FrameworkComunes(){
    echo "<head>";
-   echo "<script type='text/javascript' src='".$this->rutaJavaScript."jquery-1.11.1.js'></script>";
-   echo "<script type='text/javascript' src='".$this->rutaBootstrapComun."js/bootstrap.js'></script>";
-   echo "<link rel=stylesheet href='".$this->rutaBootstrapComun."css/bootstrap.css' type='text/css' media='screen'>";
+   echo "<script type='text/javascript' src='http://code.jquery.com/jquery-1.11.1.js'></script>";
+   echo "<script type='text/javascript' src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js'></script>";
+   echo "<link rel=stylesheet href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css' type='text/css' media='screen'>";
    echo "</head>";
   }
   public function ArchivosEsenciales(){
     echo "<head>";
    //echo "<script type='text/javascript' src='https://code.jquery.com/jquery-3.2.1.slim.min.js'></script>";
     echo "<script type='text/javascript' src='".$this->rutaJavaScript."acciones.js'></script>";
-    echo "<link rel=stylesheet href='".$this->rutaCss."estilos.css' type='text/css'>";
-    echo "<link rel=stylesheet href='".$this->rutaCss."animate.css' type='text/css'>";
+    //echo "<link rel=stylesheet href='".$this->rutaCss."estilos.css' type='text/css'>";
+    //echo "<link rel=stylesheet href='".$this->rutaCss."animate.css' type='text/css'>";
     echo "<meta charset='utf-8'>";
     echo "</head>";
   }
@@ -103,6 +103,9 @@ function coger_dato_externo($nomvariable){
 }
 /*Funcion que permite escribir en la consola de javascript*/
 function fnConsoloLog($textoplano){
-   echo "<script>console.log($textoplano);</script>";
+   echo "<script>console.log('".$textoplano."')</script>";
+}
+function fnCargaSimple($pagina,$mensajehtml,$divprincipal,$divmensajero){
+   echo "<script>fnCargaSimple('".$pagina."','".$mensajehtml."','".$divprincipal."','".$divmensajero."');</script>";
 }
 ?>
