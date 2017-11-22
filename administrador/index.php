@@ -34,7 +34,7 @@ echo $cabecera->ArchivosEsenciales();
             <div class="dropdown-menu">
               <a class="dropdown-item" href="#">Tipos de Contrato</a>
               <a class="dropdown-item" href="javascript:fnCargaSimple('importar_zonas.php','Cargando Importador','#divPrincipal','#divmensajero');">Zonas</a>
-              <a class="dropdown-item" href="#">Sector</a>
+              <a class="dropdown-item" href="javascript:fnCargaSimple('sector.php','Cargando Importador','#divPrincipal','#divmensajero');">Sector</a>
               <a class="dropdown-item" href="javascript:fnCargaSimple('rutas.php','Cargando Importador','#divPrincipal','#divmensajero');">Ruta</a>
               <div class="dropdown-divider"></div>
               <a class="dropdown-item">Ver contratos-GPS</a>
