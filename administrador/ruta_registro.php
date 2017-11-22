@@ -94,7 +94,7 @@ switch ($registronro) {
         }
     }
     break;
-  case 'ActualizarZona':
+  case 'ActualizarRuta':
     $RutaId=coger_dato_externo("txtRutaID");
     $NroRuta=coger_dato_externo("txtNroRuta");
     $NombreRuta=coger_dato_externo("txtNombreRuta");
@@ -121,7 +121,7 @@ switch ($registronro) {
       msg_rojo("Por Alguna Razon Desconocida no se pudo guardar este registro. Intentelo nuevamente");
     }
     break;
-  case 'EliminarZona':
+  case 'EliminarRuta':
     $RutaID_e=coger_dato_externo("txtRutaID_e");
     $popNombreModal=coger_dato_externo("popNombreModal");//Recoge el nombre del popup a cerrar de bootstrap 4.x
     $ConexionSealDBGeneralidades= new ConexionSealDBGeneralidades();

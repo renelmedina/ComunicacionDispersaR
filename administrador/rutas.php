@@ -41,7 +41,7 @@ $stmt->execute();
             <input type="hidden" class="btn btn-primary" value="upload" name="action" />
             <input type="hidden" name="registronro" value="ImportarRutas">
           </form>
-            <input type='button' class="btn btn-primary" name='enviar'  value="Importar" onclick="envio_general_forms('#frmimportarruta','zona_registro.php','#divCuerpo','#divPieCard','Importando Zonas..........');" />
+            <input type='button' class="btn btn-primary" name='enviar'  value="Importar" onclick="envio_general_forms('#frmimportarruta','ruta_registro.php','#divCuerpo','#divPieCard','Importando Rutas...');" />
           <div id="divPieCard"></div>
         </div>
       </div>
@@ -139,9 +139,9 @@ $stmt->execute();
   $('#popEliminarRuta').on('show.bs.modal', function (event) {
     var button = $(event.relatedTarget) // Button that triggered the modal
     //Es importante que los data-zonaid='valor', la propieda sea todo en minusculas
-    var varZonaID=button.data('zonaid_e')
-    var varNroZona=button.data('nrozona_e')
-    var varNombreZona = button.data('nombrezona_e') // Extract info from data-* attributes
+    var varZonaID=button.data('rutaid_e')
+    var varNroZona=button.data('nroruta_e')
+    var varNombreZona = button.data('nombreruta_e') // Extract info from data-* attributes
     var varDescripcion = button.data('descripcion_e') // Extract info from data-* attributes
     // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
     // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
