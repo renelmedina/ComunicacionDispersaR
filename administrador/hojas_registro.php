@@ -2,7 +2,7 @@
 require_once("../libreria.php");
 $registronro=coger_dato_externo("registronro");
 switch ($registronro) {
-  case "ImportarRutas":
+  case "ImportarHojas":
     //extract($_POST);
     if (empty($_FILES['excel']['name'])) {
         msg_rojo("Debes de seleccionar un archivo");
@@ -39,8 +39,8 @@ switch ($registronro) {
             // Llenamos el arreglo con los datos  del archivo xlsx
             $FilasTotales=$objPHPExcel->setActiveSheetIndex(0)->getHighestRow();
             for ($i = 2; $i <= $FilasTotales; $i++) {//$FilasTotales el total aceptado es 1303
-                $_DATOS_EXCEL[$i]['NroRuta'] = $objPHPExcel->getActiveSheet()->getCell('A' . $i)->getCalculatedValue();
-                $_DATOS_EXCEL[$i]['NombreRuta'] = $objPHPExcel->getActiveSheet()->getCell('B' . $i)->getCalculatedValue();
+                $_DATOS_EXCEL[$i]['NroHoja'] = $objPHPExcel->getActiveSheet()->getCell('A' . $i)->getCalculatedValue();
+                $_DATOS_EXCEL[$i]['NombreHoja'] = $objPHPExcel->getActiveSheet()->getCell('B' . $i)->getCalculatedValue();
                 $_DATOS_EXCEL[$i]['Descripcion'] = $objPHPExcel->getActiveSheet()->getCell('C' . $i)->getCalculatedValue();
             }
             fnConsoloLog("Filas Detectadas: ".($FilasTotales-1));
@@ -54,18 +54,18 @@ switch ($registronro) {
         //para ir recuperando los datos obtenidos
         //del excel e ir insertandolos en la BD
         echo "<table>";
-        echo "<tr><th>NroRuta</th><th>Nombre Ruta</th><th>Descripcion</th></tr>";
+        echo "<tr><th>NroHoja</th><th>Nombre Hoja</th><th>Descripcion</th></tr>";
         $contadorguardados=0;
         $ConexionSealDBGeneralidades= new ConexionSealDBGeneralidades();
         foreach ($_DATOS_EXCEL as $campo => $valor) {
-          if (!empty($valor['NroRuta']) && !empty($valor['NombreRuta'])) {
-            $stmt = $ConexionSealDBGeneralidades->prepare("call IngresarRuta(
-                                            :varNroRuta,
-                                            :varNombreRuta,
-                                            :varDescripcionRuta)");
-            $rows = $stmt->execute(array(':varNroRuta'=>$valor['NroRuta'],
-                                            ':varNombreRuta'=>$valor['NombreRuta'],
-                                            ':varDescripcionRuta'=>$valor['Descripcion']));
+          if (!empty($valor['NroHoja']) && !empty($valor['NombreHoja'])) {
+            $stmt = $ConexionSealDBGeneralidades->prepare("call IngresarHoja(
+                                            :varNroHoja,
+                                            :varNombreHoja,
+                                            :varDescripcionHoja)");
+            $rows = $stmt->execute(array(':varNroHoja'=>$valor['NroHoja'],
+                                            ':varNombreHoja'=>$valor['NombreHoja'],
+                                            ':varDescripcionHoja'=>$valor['Descripcion']));
             if( $rows > 0 ){
                 //msg_verde("<span class='glyphicon glyphicon-ok' aria-hidden='true'></span> Nuevo Cliente Guardado");
                 $contadorguardados+=1;
@@ -73,11 +73,11 @@ switch ($registronro) {
                 //carga_simple('estadolocal_lista.php','#divPrincipal','#mensajes','Cargando...'); </script>";
                 //echo "Respuesta: ".$stmt[]['errno'];
             }else {
-              msg_rojo("Por Alguna Razon Desconocida no se pudo guardar este registro:<br>-NroRuta: ".$valor['NroRuta'].", Nombre Ruta: ".$valor['NombreRuta']." intentalo de nuevo.");
+              msg_rojo("Por Alguna Razon Desconocida no se pudo guardar este registro:<br>-NroHoja: ".$valor['NroHoja'].", Nombre Hoja: ".$valor['NombreHoja']." intentalo de nuevo.");
             }
             echo "<tr>";
-            echo "<td>".$valor["NroRuta"]."</td>";
-            echo "<td>".$valor["NombreRuta"]."</td>";
+            echo "<td>".$valor["NroHoja"]."</td>";
+            echo "<td>".$valor["NombreHoja"]."</td>";
             echo "<td>".$valor["Descripcion"]."</td>";
             echo "</tr>";
           }
@@ -86,59 +86,59 @@ switch ($registronro) {
         //una vez terminado el proceso borramos el archivo que esta en el servidor el bak_
         unlink($destino);
         if ($contadorguardados==($FilasTotales-1)) {//$FilasTotales-1, porque no empieza en la primera fila, sino desde la segun fila, porque la primera es la cabecera que no se importa.
-          msg_verde("Rutas importadas y actualizadas correctamente.");
+          msg_verde("Hojas importadas y actualizadas correctamente.");
           //echo "<script type='text/javascript'>fnCargaSimple('rutas.php','Cargando Importador','#divPrincipal','#divmensajero');</script>";            
-            fnCargaSimple("rutas.php","Mostrando Cambios","#divPrincipal","#divMensajero");
+            fnCargaSimple("hojas.php","Mostrando Cambios","#divPrincipal","#divMensajero");
         }else{
-          msg_azul("Zonas Importadas: $contadorguardados, Zonas Sin importar: <strong>".($campo-1-$FilasTotales)."</strong>");
+          msg_azul("Hojas Importadas: $contadorguardados, Hojas Sin importar: <strong>".($campo-1-$FilasTotales)."</strong>");
         }
     }
     break;
-  case 'ActualizarRuta':
-    $RutaId=coger_dato_externo("txtRutaID");
-    $NroRuta=coger_dato_externo("txtNroRuta");
-    $NombreRuta=coger_dato_externo("txtNombreRuta");
-    $DescripcionRuta=coger_dato_externo("txtDescripcion");
+  case 'ActualizarHoja':
+    $HojaId=coger_dato_externo("txtHojaID");
+    $NroHoja=coger_dato_externo("txtNroHoja");
+    $NombreHoja=coger_dato_externo("txtNombreHoja");
+    $DescripcionHoja=coger_dato_externo("txtDescripcion");
     $popNombreModal=coger_dato_externo("popNombreModal");//Recoge el nombre del popup a cerrar de bootstrap 4.x
     $ConexionSealDBGeneralidades= new ConexionSealDBGeneralidades();
-    $stmt = $ConexionSealDBGeneralidades->prepare("call ModificarRuta(
-                                    :varRutaID,
-                                    :varNroRuta,
-                                    :varNombreRuta,
-                                    :varDescripcionRuta)");
-    $rows = $stmt->execute(array(  ':varRutaID'=>$RutaId,
-                                    ':varNroRuta'=>$NroRuta,
-                                    ':varNombreRuta'=>$NombreRuta,
-                                    ':varDescripcionRuta'=>$DescripcionRuta));
+    $stmt = $ConexionSealDBGeneralidades->prepare("call ModificarHoja(
+                                    :varHojaID,
+                                    :varNroHoja,
+                                    :varNombreHoja,
+                                    :varDescripcionHoja)");
+    $rows = $stmt->execute(array(  ':varHojaID'=>$HojaId,
+                                    ':varNroHoja'=>$NroHoja,
+                                    ':varNombreHoja'=>$NombreHoja,
+                                    ':varDescripcionHoja'=>$DescripcionHoja));
     if( $rows > 0 ){
-        msg_verde("Ruta Actualizada");
+        msg_verde("Hoja Actualizado");
         //echo "<script type='text/javascript'>document.getElementById('$FormularioResetear').reset();
         //carga_simple('estadolocal_lista.php','#divPrincipal','#mensajes','Cargando...'); </script>";
         //echo "Respuesta: ".$stmt[]['errno'];
         echo "<script>$('$popNombreModal').modal('hide');</script>";
-        fnCargaSimple("rutas.php","Mostrando Cambios","#divPrincipal","#divMensajero");
+        fnCargaSimple("hojas.php","Mostrando Cambios...","#divPrincipal","#divMensajero");
     }else {
       msg_rojo("Por Alguna Razon Desconocida no se pudo guardar este registro. Intentelo nuevamente");
     }
     break;
-  case 'EliminarRuta':
-    $RutaID_e=coger_dato_externo("txtRutaID_e");
+  case 'EliminarHoja':
+    $HojaID_e=coger_dato_externo("txtHojaID_e");
     $popNombreModal=coger_dato_externo("popNombreModal");//Recoge el nombre del popup a cerrar de bootstrap 4.x
     $ConexionSealDBGeneralidades= new ConexionSealDBGeneralidades();
-    $stmt = $ConexionSealDBGeneralidades->prepare("call EliminarRuta(:varRutaID)");
-    $rows = $stmt->execute(array(':varRutaID'=>$RutaID_e));
+    $stmt = $ConexionSealDBGeneralidades->prepare("call EliminarHoja(:varHojaID)");
+    $rows = $stmt->execute(array(':varHojaID'=>$HojaID_e));
     if( $rows > 0 ){
-        msg_verde("Ruta Eliminada");
+        msg_verde("Hoja Eliminado");
         //echo "<script type='text/javascript'>document.getElementById('$FormularioResetear').reset();
         //carga_simple('estadolocal_lista.php','#divPrincipal','#mensajes','Cargando...'); </script>";
         //echo "Respuesta: ".$stmt[]['errno'];
         echo "<script>$('$popNombreModal').modal('hide');</script>";
-        fnCargaSimple("rutas.php","Mostrando Cambios","#divPrincipal","#divMensajero");
+        fnCargaSimple("hojas.php","Mostrando Cambios","#divPrincipal","#divMensajero");
     }else {
-      msg_rojo("Por alguna razon desconocida no se pudo eliminar este registro. Intentelo nuevamente");
+      msg_rojo("No se pudo eliminar este registro, verifica que no este vinculado a otros registros. Intentelo nuevamente");
     }
 	default:
 		# code...
 		break;
 }
-?>
+?>d

@@ -32,12 +32,13 @@ echo $cabecera->ArchivosEsenciales();
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Contratos</a>
             <div class="dropdown-menu">
-              <a class="dropdown-item" href="#">Tipos de Contrato</a>
+              <a class="dropdown-item" href="javascript:fnCargaSimple('tipocontrato.php','Cargando Importador','#divPrincipal','#divmensajero');">Tipos de Contrato</a>
               <a class="dropdown-item" href="javascript:fnCargaSimple('importar_zonas.php','Cargando Importador','#divPrincipal','#divmensajero');">Zonas</a>
               <a class="dropdown-item" href="javascript:fnCargaSimple('sector.php','Cargando Importador','#divPrincipal','#divmensajero');">Sector</a>
-              <a class="dropdown-item" href="javascript:fnCargaSimple('rutas.php','Cargando Importador','#divPrincipal','#divmensajero');">Ruta</a>
+              <a class="dropdown-item" href="javascript:fnCargaSimple('libro.php','Cargando Importador','#divPrincipal','#divmensajero');">Libro</a>
+              <a class="dropdown-item" href="javascript:fnCargaSimple('hojas.php','Cargando Importador','#divPrincipal','#divmensajero');">Hojas</a>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item">Ver contratos-GPS</a>
+              <a class="dropdown-item" href="javascript:fnCargaSimple('contratos.php','Cargando Importador','#divPrincipal','#divmensajero');">Ver Contratos</a>
             </div>
           </li>
           <li class="nav-item">
@@ -86,7 +87,7 @@ echo $cabecera->ArchivosEsenciales();
 
 
 
-    <div id="divPrincipal">divPrincipal</div>
+    <div id="divPrincipal" style="border: solid 1px red;">divPrincipal</div>
     <div id="divMensajero">divMensajero</div>
     <div id="divPie">divPie</div>
   </body>
