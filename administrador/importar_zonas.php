@@ -32,11 +32,13 @@ $stmt->execute();
       echo "</table>";
       ?>
     </td>
-    <td>
+    <td valign="top">
       <div class="card border-info text-center mb-4">
         <form name="importa" id="frmimporta" method="post" action="importar_zonas.php" enctype="multipart/form-data" onsubmit="return false;" >
         <div class="card-header bg-info">Actualizar Zonas en Bloque</div>
         <div class="card-body">
+          <img src="../images/zonaPlantilla.jpg" alt="" style="border: solid 1px black;"><br>
+          <a href="../plantillasxls/zonaPlantilla.xlsx" download>Descargar Plantilla</a>
           <h4 class="card-title">Archivo a importar</h4>
           <p class="card-text">Sube un archivo con el formato correcto para insertar o actualizar todas las zonas</p>
             <input type="file" name="excel" />

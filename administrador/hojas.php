@@ -1,13 +1,32 @@
 <?php
 require_once("../libreria.php");
+$varPaginaActual=(coger_dato_externo("hdPaginaActual")==null?1:coger_dato_externo("hdPaginaActual"));
+$varPaginasMostrar=100;//cantidad de registros a mostrar
+#Contando la cantidad total de la busqueda en la tabla contrato
 $ConexionSealDBGeneralidades= new ConexionSealDBGeneralidades();
-$sqlListarHojas="CALL ListarTodoHojas()";
+$sqlCantidad="CALL ListarTodoHojasXpaginas_Total()";
+$stmtCantidad= $ConexionSealDBGeneralidades->prepare($sqlCantidad);
+$stmtCantidad->execute();
+$ListaCantidadSolicitud=array();
+foreach($stmtCantidad as $CantidadSolicitud) {
+  $ListaCantidadSolicitud[]=$CantidadSolicitud;
+}
+$PaginasTotales=ceil($ListaCantidadSolicitud[0]["total"]/$varPaginasMostrar);//Ceil redondea un numero, funcion de php
+$ConexionSealDBComunicacionDispersa=null;//cerramos la conexion
+
+//Artilugio para poner la cantidad de paginas
+$pagina_actual2=($varPaginaActual-1)*$varPaginasMostrar;
+$ConexionSealDBGeneralidades=null;
+
+//haciendo la consulta
+$ConexionSealDBGeneralidades= new ConexionSealDBGeneralidades();
+$sqlListarHojas="CALL ListarTodoHojasXpaginas($pagina_actual2,$varPaginasMostrar)";
 $stmt=$ConexionSealDBGeneralidades->prepare($sqlListarHojas);
 $stmt->execute();
 ?>
 <table>
   <tr>
-    <td>
+    <td id="listadatoshoja">
       <?php
       echo "<table>";
       echo "<tr><th>Nro Hoja</th><th>Nombre Hoja</th><th>Descripcion Hoja</th><th>Acciones</th></tr>";
@@ -28,12 +47,75 @@ $stmt->execute();
         echo "</tr>";
       }
       echo "</table>";
-      ?>
+
+    # Paginado
+    $PaginaNavega="hojas.php?algo=cada";
+    $PaginaAnterior=($varPaginaActual>0?$varPaginaActual-1:1);
+    $PAnterior=$PaginaNavega."&hdPaginaActual=$PaginaAnterior";
+    $PaginaSiguiente=($varPaginaActual<$PaginasTotales?$varPaginaActual+1:$PaginasTotales);
+    $PSiguiente=$PaginaNavega."&hdPaginaActual=$PaginaSiguiente";
+    ?>
+    <nav aria-label="navPaginado">
+      <ul class="pagination justify-content-center">
+        <li class='page-item'><a class='page-link' href="javascript:fnCargaSimple('hojas.php?hdPaginaActual=1','Cargando primera pagina...','#divPrincipal','#divMensajero');"><<</a></li>
+        <?php
+        $verificar1raPagina=($varPaginaActual<=1?"disabled":"");
+        echo "<li class='page-item $verificar1raPagina'><a class='page-link' href=\"javascript:fnCargaSimple('$PAnterior','Cargando pagina $PaginaAnterior...','#divPrincipal','#divMensajero');\"><</a></li>";
+        $paginafinlimite=$PaginasTotales;
+        $paginainilimite=1;
+        $condicion=0;
+        if ($PaginasTotales-$varPaginaActual<=10) {
+          $paginafinlimite=$PaginasTotales+1;
+          $paginainilimite=$PaginasTotales-10;
+          $condicion=1;
+        }else if($varPaginaActual+10==$PaginasTotales){
+          $paginafinlimite=$PaginasTotales+1;
+          $paginainilimite=$varPaginaActual;
+          $condicion=2;
+        }else if($varPaginaActual<=10){
+          $paginafinlimite=$varPaginaActual+10;
+          $paginainilimite=$varPaginaActual;
+        }else{
+          $paginafinlimite=$varPaginaActual+5;
+          $paginainilimite=$varPaginaActual-5;
+          $condicion=4;
+        }
+        //echo $paginainilimite."-".$paginafinlimite."::".$condicion;
+        if ($PaginasTotales>10) {
+            for ($i=$paginainilimite; $i < ($paginafinlimite) ; $i++) {
+              if ($varPaginaActual!=$i) {
+                //$PaginaNavega.="&hdPaginaActual=$i";
+                $navegacionpag=$PaginaNavega."&hdPaginaActual=$i";
+                echo "<li class='page-item'><a class='page-link' href=\"javascript:fnCargaSimple('$navegacionpag','Cargando pagina $i...','#divPrincipal','#divMensajero');\">$i</a></li>";
+              }else {
+                echo "<li class='page-item active'><span class='page-link'>$i</span></li>";
+              }
+            }
+        }else{
+          for ($i=1; $i <=$PaginasTotales ; $i++) {
+            if ($varPaginaActual!=$i) {
+              //$PaginaNavega.="&hdPaginaActual=$i";
+              $navegacionpag=$PaginaNavega."&hdPaginaActual=$i";
+              echo "<li class='page-item'><a class='page-link' href=\"javascript:fnCargaSimple('$navegacionpag','Cargando pagina $i...','#divPrincipal','#divMensajero');\">$i</a></li>";
+            }else {
+              echo "<li class='page-item active'><span class='page-link'>$i</span></li>";
+            }
+          }
+        }
+        $verificarUltimaPagina=($varPaginaActual>=$PaginasTotales?"disabled":"");
+        echo "<li class='page-item $verificarUltimaPagina'><a class='page-link' href=\"javascript:fnCargaSimple('$PSiguiente','Cargando pagina $PaginaSiguiente...','#divPrincipal','#divMensajero');\">></a></li>";
+        ?>
+        
+        <li class='page-item'><a class='page-link' href="javascript:fnCargaSimple('hojas.php?hdPaginaActual=<?php echo $PaginasTotales; ?>','Cargando ultima pagina...','#divPrincipal','#divMensajero');">>></a></li>
+      </ul>
+    </nav>
     </td>
-    <td>
+    <td valign="top">
       <div class="card border-info text-center mb-4">
         <form name="importa" id="frmimportarhoja" method="post" enctype="multipart/form-data" onsubmit="return false;" >
         <div class="card-header bg-info">Actualizar Hojas en Bloque</div>
+        <img src="../images/hojaPlantilla.jpg" alt="" style="border: solid 1px black;"><br>
+        <a href="../plantillasxls/hojaPlantilla.xlsx" download>Descargar Plantilla</a> (Maximo 500 filas por libro)
         <div class="card-body">
           <h4 class="card-title">Archivo a importar</h4>
           <p class="card-text">Sube un archivo con el formato correcto para insertar o actualizar todas las hojas</p>

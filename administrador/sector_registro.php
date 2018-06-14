@@ -18,7 +18,7 @@ switch ($registronro) {
         $destino = "bak_" . $archivo;
         if (copy($_FILES['excel']['tmp_name'], $destino)){
             //echo "Archivo Cargado Con Éxito";
-            fnConsoloLog("Archivo Cargado Con Éxito");
+            fnConsoleLog("Archivo Cargado Con Éxito");
         }
         else{
             msg_rojo("Error Al Cargar el Archivo");
@@ -43,7 +43,7 @@ switch ($registronro) {
                 $_DATOS_EXCEL[$i]['NombreSector'] = $objPHPExcel->getActiveSheet()->getCell('B' . $i)->getCalculatedValue();
                 $_DATOS_EXCEL[$i]['Descripcion'] = $objPHPExcel->getActiveSheet()->getCell('C' . $i)->getCalculatedValue();
             }
-            fnConsoloLog("Filas Detectadas: ".($FilasTotales-1));
+            fnConsoleLog("Filas Detectadas: ".($FilasTotales-1));
             msg_verde("Archivo importado con exito, en total ".($FilasTotales-1)." registros Y $errores ERRORES");
         }
         //si por algo no cargo el archivo bak_ 

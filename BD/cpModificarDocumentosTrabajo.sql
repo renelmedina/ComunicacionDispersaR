@@ -1,0 +1,47 @@
+CREATE PROCEDURE `ModificarDocumentosTrabajo` (
+	in varDocumentosTrabajoID int,
+	in varIdTDD_Detalle int,
+	in varIdNotificador int,
+	in varContratoID varchar(255),
+	in varCodBarra varchar(255),
+	in varNroDocumento varchar(45),
+	in varNombreCliente varchar(255),
+	in varDireccion varchar(255),
+	in varTipo varchar(255),
+	in varSE varchar(45),
+	in varZona varchar(45),
+	in varSector varchar(10),
+	in varLibro varchar(10),
+	in varFechaEmisionDoc date,
+	in varFechaTrabajo date,
+	in varFechaAsignacion date,
+	in varFechaEjecucion date,
+	in varFechaLimiteCargo date,
+	in varFechaEntregaASeal date,
+	in varEstado varchar(255),
+	in varObservaciones varchar(255)
+)
+BEGIN
+	update DocumentosTrabajo set
+		IdTDD_Detalle=varIdTDD_Detalle,
+		IdNotificador=varIdNotificador,
+		ContratoID=varContratoID,
+		CodBarra=varCodBarra,
+		NroDocumento=varNroDocumento,
+		NombreCliente=varNombreCliente,
+		Direccion=varDireccion,
+		Tipo=varTipo,
+		SE=varSE,
+		Zona=varZona,
+		Sector=varSector,
+		Libro=varLibro,
+		FechaEmisionDoc=varFechaEmisionDoc,
+		FechaTrabajo=varFechaTrabajo,
+		FechaAsignacion=varFechaAsignacion,
+		FechaEjecucion=varFechaEjecucion,
+		FechaLimiteCargo=varFechaLimiteCargo,
+		FechaEntregaASeal=varFechaEntregaASeal,
+		Estado=varEstado,
+		Observaciones=varObservaciones
+	where idDocumentosTrabajo=varDocumentosTrabajoID;
+END

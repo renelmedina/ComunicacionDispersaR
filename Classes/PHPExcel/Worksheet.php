@@ -936,6 +936,7 @@ class PHPExcel_Worksheet implements PHPExcel_IComparable
 		}
 
 		// Named range?
+		set_time_limit (300);
 		if ((!preg_match('/^'.PHPExcel_Calculation::CALCULATION_REGEXP_CELLREF.'$/i', $pCoordinate, $matches)) &&
 			(preg_match('/^'.PHPExcel_Calculation::CALCULATION_REGEXP_NAMEDRANGE.'$/i', $pCoordinate, $matches))) {
 			$namedRange = PHPExcel_NamedRange::resolveRange($pCoordinate, $this);

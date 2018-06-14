@@ -1,6 +1,7 @@
 <?php
 require_once("../libreria.php");
 $registronro=coger_dato_externo("registronro");
+echo $registronro;
 switch ($registronro) {
   case "ImportarContratos":
     //extract($_POST);
@@ -19,7 +20,7 @@ switch ($registronro) {
         $destino = "bak_" . $archivo;
         if (copy($_FILES['excel']['tmp_name'], $destino)){
             //echo "Archivo Cargado Con Éxito";
-            fnConsoloLog("Archivo Cargado Con Éxito");
+            fnConsoleLog("Archivo Cargado Con Éxito");
         }
         else{
             msg_rojo("Error Al Cargar el Archivo");
@@ -39,21 +40,26 @@ switch ($registronro) {
             $db = mysql_select_db("prueba", $cn) or die("ERROR AL CONECTAR A LA BD");*/
             // Llenamos el arreglo con los datos  del archivo xlsx
             $FilasTotales=$objPHPExcel->setActiveSheetIndex(0)->getHighestRow();
+            set_time_limit (1200);
             for ($i = 2; $i <= $FilasTotales; $i++) {//$FilasTotales el total aceptado es 1303
-                $_DATOS_EXCEL[$i]['NroSector'] = $objPHPExcel->getActiveSheet()->getCell('A' . $i)->getCalculatedValue();
-                $_DATOS_EXCEL[$i]['NroZona'] = $objPHPExcel->getActiveSheet()->getCell('B' . $i)->getCalculatedValue();
-                $_DATOS_EXCEL[$i]['NroLibro'] = $objPHPExcel->getActiveSheet()->getCell('C' . $i)->getCalculatedValue();
-                $_DATOS_EXCEL[$i]['Hoja'] = $objPHPExcel->getActiveSheet()->getCell('D' . $i)->getCalculatedValue();
-                $_DATOS_EXCEL[$i]['NroContrato'] = $objPHPExcel->getActiveSheet()->getCell('E' . $i)->getCalculatedValue();
-                $_DATOS_EXCEL[$i]['Nim'] = $objPHPExcel->getActiveSheet()->getCell('F' . $i)->getCalculatedValue();
-                $_DATOS_EXCEL[$i]['TipoContrato'] = $objPHPExcel->getActiveSheet()->getCell('G' . $i)->getCalculatedValue();
-                $_DATOS_EXCEL[$i]['Cliente'] = $objPHPExcel->getActiveSheet()->getCell('H' . $i)->getCalculatedValue();
-                $_DATOS_EXCEL[$i]['Direccion'] = $objPHPExcel->getActiveSheet()->getCell('I' . $i)->getCalculatedValue();
-                $_DATOS_EXCEL[$i]['Sed'] = $objPHPExcel->getActiveSheet()->getCell('J' . $i)->getCalculatedValue();
-                $_DATOS_EXCEL[$i]['Longitud'] = $objPHPExcel->getActiveSheet()->getCell('K' . $i)->getCalculatedValue();
-                $_DATOS_EXCEL[$i]['Latitud'] = $objPHPExcel->getActiveSheet()->getCell('L' . $i)->getCalculatedValue();
+                if (!empty($objPHPExcel->getActiveSheet()->getCell('F' . $i)->getCalculatedValue())) {
+                    # code...
+                    $_DATOS_EXCEL[$i]['Orden'] = $objPHPExcel->getActiveSheet()->getCell('A' . $i)->getCalculatedValue();
+                    $_DATOS_EXCEL[$i]['NroSector'] = $objPHPExcel->getActiveSheet()->getCell('B' . $i)->getCalculatedValue();
+                    $_DATOS_EXCEL[$i]['NroZona'] = $objPHPExcel->getActiveSheet()->getCell('C' . $i)->getCalculatedValue();
+                    $_DATOS_EXCEL[$i]['NroLibro'] = $objPHPExcel->getActiveSheet()->getCell('D' . $i)->getCalculatedValue();
+                    $_DATOS_EXCEL[$i]['Hoja'] = $objPHPExcel->getActiveSheet()->getCell('E' . $i)->getCalculatedValue();
+                    $_DATOS_EXCEL[$i]['NroContrato'] = $objPHPExcel->getActiveSheet()->getCell('F' . $i)->getCalculatedValue();
+                    $_DATOS_EXCEL[$i]['Nim'] = $objPHPExcel->getActiveSheet()->getCell('G' . $i)->getCalculatedValue();
+                    //$_DATOS_EXCEL[$i]['TipoContrato'] = $objPHPExcel->getActiveSheet()->getCell('G' . $i)->getCalculatedValue();
+                    $_DATOS_EXCEL[$i]['Cliente'] = $objPHPExcel->getActiveSheet()->getCell('I' . $i)->getCalculatedValue();
+                    $_DATOS_EXCEL[$i]['Direccion'] = $objPHPExcel->getActiveSheet()->getCell('J' . $i)->getCalculatedValue();
+                    $_DATOS_EXCEL[$i]['Sed'] = $objPHPExcel->getActiveSheet()->getCell('K' . $i)->getCalculatedValue();
+                    $_DATOS_EXCEL[$i]['Latitud'] = $objPHPExcel->getActiveSheet()->getCell('L' . $i)->getCalculatedValue();
+                    $_DATOS_EXCEL[$i]['Longitud'] = $objPHPExcel->getActiveSheet()->getCell('M' . $i)->getCalculatedValue();
+                }
             }
-            fnConsoloLog("Filas Detectadas: ".($FilasTotales-1));
+            fnConsoleLog("Filas Detectadas: ".($FilasTotales-1));
             msg_verde("Archivo importado con exito, en total ".($FilasTotales-1)." registros Y $errores ERRORES");
         }else{
             //si por algo no cargo el archivo bak_
@@ -68,56 +74,53 @@ switch ($registronro) {
         $ConexionSealDBGeneralidades= new ConexionSealDBGeneralidades();
         foreach ($_DATOS_EXCEL as $campo => $valor) {
           if (!empty($valor['NroSector']) && !empty($valor['NroZona'])&& !empty($valor['NroLibro'])&& !empty($valor['Hoja'])&& !empty($valor['NroContrato'])) {
-            $stmt = $ConexionSealDBGeneralidades->prepare("call InsertarContrato(
-                                            :varNroContrato,
-                                            :varSectorID,
-                                            :varZonaID,
-                                            :varLibroID,
+            $stmt = $ConexionSealDBGeneralidades->prepare("call InsertarContratos2(
+                                            :varOrden,
+                                            :varNroSector,
+                                            :varNroZona,
+                                            :varNroLibro,
                                             :varHoja,
+                                            :varNroContrato,
                                             :varNim,
                                             :varTipoID,
                                             :varNombresDuenio,
                                             :varDireccionMedidor,
                                             :varSed,
-                                            :varLongitud,
-                                            :varLatitud)");
-            $rows = $stmt->execute(array(':varNroContrato'=>$valor['NroContrato'],
-                                            ':varSectorID'=>$valor['NroSector'],
-                                            ':varZonaID'=>$valor['NroZona'],
-                                            ':varLibroID'=>$valor['NroLibro'],
+                                            :varLatitud,
+                                            :varLongitud)");
+            $rows = $stmt->execute(array(   ':varOrden'=>$valor['Orden'],
+                                            ':varNroSector'=>$valor['NroSector'],
+                                            ':varNroZona'=>$valor['NroZona'],
+                                            ':varNroLibro'=>$valor['NroLibro'],
                                             ':varHoja'=>$valor['Hoja'],
+                                            ':varNroContrato'=>$valor['NroContrato'],
                                             ':varNim'=>$valor['Nim'],
-                                            ':varTipoID'=>$valor['TipoContrato'],
+                                            ':varTipoID'=>$cboTipoContrato_a,
                                             ':varNombresDuenio'=>$valor['Cliente'],
                                             ':varDireccionMedidor'=>$valor['Direccion'],
                                             ':varSed'=>$valor['Sed'],
-                                            ':varLongitud'=>$valor['Longitud'],
-                                            ':varLatitud'=>$valor['Latitud']));
-            if( $rows > 0 ){
+                                            ':varLatitud'=>$valor['Latitud'],
+                                            ':varLongitud'=>$valor['Longitud']));
+            if($rows > 0){
                 //msg_verde("<span class='glyphicon glyphicon-ok' aria-hidden='true'></span> Nuevo Cliente Guardado");
                 $contadorguardados+=1;
                 //echo "<script type='text/javascript'>document.getElementById('$FormularioResetear').reset();
                 //carga_simple('estadolocal_lista.php','#divPrincipal','#mensajes','Cargando...'); </script>";
                 //echo "Respuesta: ".$stmt[]['errno'];
-            }else {
-              msg_rojo("Por Alguna Razon Desconocida no se pudo guardar este registro:<br>-NroHoja: ".$valor['NroHoja'].", Nombre Hoja: ".$valor['NombreHoja']." intentalo de nuevo.");
+            }else{
+              msg_rojo("Por Alguna Razon Desconocida no se pudo guardar este registro:<br>-Nrocontrato: ".$valor['NroContrato'].", Sector: ".$valor['NroSector'].", Zona: ".$valor['NroZona'].", Libro: ".$valor['NroLibro']." intentalo de nuevo.");
             }
-            //echo "<tr>";
-            //echo "<td>".$valor["NroHoja"]."</td>";
-//            echo "<td>".$valor["NombreHoja"]."</td>";
-//            echo "<td>".$valor["Descripcion"]."</td>";
-            //echo "</tr>";
           }
         }
         //echo "</table>";
         //una vez terminado el proceso borramos el archivo que esta en el servidor el bak_
         unlink($destino);
         if ($contadorguardados==($FilasTotales-1)) {//$FilasTotales-1, porque no empieza en la primera fila, sino desde la segun fila, porque la primera es la cabecera que no se importa.
-          msg_verde("Hojas importadas y actualizadas correctamente.");
+          msg_verde("Contratos importados y actualizados correctamente.");
           //echo "<script type='text/javascript'>fnCargaSimple('rutas.php','Cargando Importador','#divPrincipal','#divmensajero');</script>";            
-            fnCargaSimple("hojas.php","Mostrando Cambios","#divPrincipal","#divMensajero");
+            fnCargaSimple("contratos.php","Mostrando Cambios","#divPrincipal","#divMensajero");
         }else{
-          msg_azul("Hojas Importadas: $contadorguardados, Hojas Sin importar: <strong>".($campo-1-$FilasTotales)."</strong>");
+          msg_azul("Contratos Importados: $contadorguardados, Contratos Sin importar: <strong>".($campo-1-$contadorguardados)."</strong>");
         }
     }
     break;
@@ -143,7 +146,7 @@ switch ($registronro) {
         //carga_simple('estadolocal_lista.php','#divPrincipal','#mensajes','Cargando...'); </script>";
         //echo "Respuesta: ".$stmt[]['errno'];
         echo "<script>$('$popNombreModal').modal('hide');</script>";
-        fnCargaSimple("hojas.php","Mostrando Cambios...","#divPrincipal","#divMensajero");
+        fnCargaSimple("contratos.php","Mostrando Cambios...","#divPrincipal","#divMensajero");
     }else {
       msg_rojo("Por Alguna Razon Desconocida no se pudo guardar este registro. Intentelo nuevamente");
     }
@@ -160,7 +163,7 @@ switch ($registronro) {
         //carga_simple('estadolocal_lista.php','#divPrincipal','#mensajes','Cargando...'); </script>";
         //echo "Respuesta: ".$stmt[]['errno'];
         echo "<script>$('$popNombreModal').modal('hide');</script>";
-        fnCargaSimple("hojas.php","Mostrando Cambios","#divPrincipal","#divMensajero");
+        fnCargaSimple("contratos.php","Mostrando Cambios","#divPrincipal","#divMensajero");
     }else {
       msg_rojo("No se pudo eliminar este registro, verifica que no este vinculado a otros registros. Intentelo nuevamente");
     }

@@ -30,10 +30,12 @@ $stmt->execute();
       echo "</table>";
       ?>
     </td>
-    <td>
+    <td valign="top">
       <div class="card border-info text-center mb-4">
         <form name="importa" id="frmimportarsector" method="post" enctype="multipart/form-data" onsubmit="return false;" >
         <div class="card-header bg-info">Actualizar Sectores en Bloque</div>
+        <img src="../images/sectorPlantilla.jpg" alt="Sector Plantilla" style="border: solid 1px black;"><br>
+        <a href="../plantillasxls/sectorPlantilla.xlsx" download>Descargar Plantilla</a>
         <div class="card-body">
           <h4 class="card-title">Archivo a importar</h4>
           <p class="card-text">Sube un archivo con el formato correcto para insertar o actualizar todos los sectores</p>

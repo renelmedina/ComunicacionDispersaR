@@ -37,7 +37,8 @@
             $db = mysql_select_db("prueba", $cn) or die("ERROR AL CONECTAR A LA BD");*/
             // Llenamos el arreglo con los datos  del archivo xlsx
             $FilasTotales=$objPHPExcel->setActiveSheetIndex(0)->getHighestRow();
-            for ($i = 2; $i <= 100; $i++) {//$FilasTotales el total aceptado es 1303
+            set_time_limit(300);
+            for ($i = 2; $i <= $FilasTotales; $i++) {//$FilasTotales el total aceptado es 1303
                 $_DATOS_EXCEL[$i]['sector'] = $objPHPExcel->getActiveSheet()->getCell('A' . $i)->getCalculatedValue();
                 $_DATOS_EXCEL[$i]['zona'] = $objPHPExcel->getActiveSheet()->getCell('B' . $i)->getCalculatedValue();
                 $_DATOS_EXCEL[$i]['ruta'] = $objPHPExcel->getActiveSheet()->getCell('C' . $i)->getCalculatedValue();

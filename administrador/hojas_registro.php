@@ -18,7 +18,7 @@ switch ($registronro) {
         $destino = "bak_" . $archivo;
         if (copy($_FILES['excel']['tmp_name'], $destino)){
             //echo "Archivo Cargado Con Éxito";
-            fnConsoloLog("Archivo Cargado Con Éxito");
+            fnConsoleLog("Archivo Cargado Con Éxito");
         }
         else{
             msg_rojo("Error Al Cargar el Archivo");
@@ -38,12 +38,19 @@ switch ($registronro) {
             $db = mysql_select_db("prueba", $cn) or die("ERROR AL CONECTAR A LA BD");*/
             // Llenamos el arreglo con los datos  del archivo xlsx
             $FilasTotales=$objPHPExcel->setActiveSheetIndex(0)->getHighestRow();
-            for ($i = 2; $i <= $FilasTotales; $i++) {//$FilasTotales el total aceptado es 1303
-                $_DATOS_EXCEL[$i]['NroHoja'] = $objPHPExcel->getActiveSheet()->getCell('A' . $i)->getCalculatedValue();
-                $_DATOS_EXCEL[$i]['NombreHoja'] = $objPHPExcel->getActiveSheet()->getCell('B' . $i)->getCalculatedValue();
-                $_DATOS_EXCEL[$i]['Descripcion'] = $objPHPExcel->getActiveSheet()->getCell('C' . $i)->getCalculatedValue();
+            set_time_limit(300);
+
+            $Textosql=array();
+            for ($i = 2; $i <= $FilasTotales; $i++) {//$FilasTotales el total aceptado es 500
+                $_DATOS_EXCEL[$i]['NroHoja'] = $objPHPExcel->getActiveSheet()->getCell('A' . $i)->getValue();
+                $_DATOS_EXCEL[$i]['NombreHoja'] = $objPHPExcel->getActiveSheet()->getCell('B' . $i)->getValue();
+                $_DATOS_EXCEL[$i]['Descripcion'] = $objPHPExcel->getActiveSheet()->getCell('C' . $i)->getValue();
+                if ($_DATOS_EXCEL[$i]['NroHoja']!=""||$_DATOS_EXCEL[$i]['NroHoja']=="0") {
+                    # code...
+                    $Textosql[]="call IngresarHoja('".$_DATOS_EXCEL[$i]['NroHoja']."','".$_DATOS_EXCEL[$i]['NombreHoja']."','".$_DATOS_EXCEL[$i]['Descripcion']."');";
+                }
             }
-            fnConsoloLog("Filas Detectadas: ".($FilasTotales-1));
+            fnConsoleLog("Filas Detectadas: ".($FilasTotales-1));
             msg_verde("Archivo importado con exito, en total ".($FilasTotales-1)." registros Y $errores ERRORES");
         }
         //si por algo no cargo el archivo bak_ 
@@ -56,10 +63,46 @@ switch ($registronro) {
         echo "<table>";
         echo "<tr><th>NroHoja</th><th>Nombre Hoja</th><th>Descripcion</th></tr>";
         $contadorguardados=0;
-        $ConexionSealDBGeneralidades= new ConexionSealDBGeneralidades();
+        
+        $sentenciaSql="";
+        $Limiteregistros=500;
+        $iteraciones=ceil(count($Textosql)/$Limiteregistros);
+        //echo "Fila tot";
+        //Estadisticas obtenidas por experiencia en el volcado de datos
+        $cantidadregistroprocesadosmaximo=1000;
+        $tiempoprocesamientomaximosegundos=90;
+
+        $tiempoEsperaMaximo=$tiempoprocesamientomaximosegundos*count($Textosql)/$cantidadregistroprocesadosmaximo;
+        fnConsoleLog("tiempo de espera: $tiempoEsperaMaximo");
+        set_time_limit($tiempoEsperaMaximo);
+        for ($i=0; $i <$iteraciones ; $i++) {
+            $sqlsentence="";
+            $iniciador=$i*$Limiteregistros;
+            for ($j=$iniciador; $j < $Limiteregistros+$iniciador; $j++) { 
+                $sqlsentence.=$Textosql[$j];
+            }
+            echo "$sqlsentence";
+            echo "-----aqui va la ejecucion $i----------- <br>";
+
+            $ConexionSealDBGeneralidades= new ConexionSealDBGeneralidades();
+            $stmt = $ConexionSealDBGeneralidades->prepare($sqlsentence);
+            set_time_limit(300);
+            $rows = $stmt->execute();
+            if( $rows > 0 ){
+                msg_verde("Hojas importadas y actualizadas correctamente (sentencia $i).");
+                //fnCargaSimple("hojas.php","Mostrando Cambios","#divPrincipal","#divMensajero");
+            }else {
+              //msg_rojo("Por Alguna Razon Desconocida no se pudo guardar este registro:<br>-NroHoja: ".$valor['NroHoja'].", Nombre Hoja: ".$valor['NombreHoja']." intentalo de nuevo.");
+                msg_azul("sentencia $i no se ejecuto");
+
+            }
+            $ConexionSealDBGeneralidades=null;
+        }
+        return;
         foreach ($_DATOS_EXCEL as $campo => $valor) {
-          if (!empty($valor['NroHoja']) && !empty($valor['NombreHoja'])) {
-            $stmt = $ConexionSealDBGeneralidades->prepare("call IngresarHoja(
+          if (($valor['NroHoja']!="" || $valor['NroHoja']=="0") && $valor['NombreHoja']!="") {
+            $sentenciaSql.="call IngresarHoja('".$valor['NroHoja']."','".$valor['NombreHoja']."','".$valor['Descripcion']."');";
+            /*$stmt = $ConexionSealDBGeneralidades->prepare("call IngresarHoja(
                                             :varNroHoja,
                                             :varNombreHoja,
                                             :varDescripcionHoja)");
@@ -74,7 +117,7 @@ switch ($registronro) {
                 //echo "Respuesta: ".$stmt[]['errno'];
             }else {
               msg_rojo("Por Alguna Razon Desconocida no se pudo guardar este registro:<br>-NroHoja: ".$valor['NroHoja'].", Nombre Hoja: ".$valor['NombreHoja']." intentalo de nuevo.");
-            }
+            }*/
             echo "<tr>";
             echo "<td>".$valor["NroHoja"]."</td>";
             echo "<td>".$valor["NombreHoja"]."</td>";
@@ -82,16 +125,35 @@ switch ($registronro) {
             echo "</tr>";
           }
         }
+        //echo "$sentenciaSql";
+        /*$ConexionSealDBGeneralidades= new ConexionSealDBGeneralidades();
+        $stmt = $ConexionSealDBGeneralidades->prepare($sentenciaSql);
+        set_time_limit(300);
+        $rows = $stmt->execute();
+        if( $rows > 0 ){
+            //msg_verde("<span class='glyphicon glyphicon-ok' aria-hidden='true'></span> Nuevo Cliente Guardado");
+            $contadorguardados+=1;
+            msg_verde("Hojas importadas y actualizadas correctamente.");
+            //echo "<script type='text/javascript'>fnCargaSimple('rutas.php','Cargando Importador','#divPrincipal','#divmensajero');</script>";            
+            fnCargaSimple("hojas.php","Mostrando Cambios","#divPrincipal","#divMensajero");
+            //echo "<script type='text/javascript'>document.getElementById('$FormularioResetear').reset();
+            //carga_simple('estadolocal_lista.php','#divPrincipal','#mensajes','Cargando...'); </script>";
+            //echo "Respuesta: ".$stmt[]['errno'];
+        }else {
+          //msg_rojo("Por Alguna Razon Desconocida no se pudo guardar este registro:<br>-NroHoja: ".$valor['NroHoja'].", Nombre Hoja: ".$valor['NombreHoja']." intentalo de nuevo.");
+            msg_azul("Hojas Importadas: $contadorguardados, Hojas Sin importar: <strong>".($campo-1-$FilasTotales)."</strong>");
+
+        }*/
         echo "</table>";
         //una vez terminado el proceso borramos el archivo que esta en el servidor el bak_
         unlink($destino);
-        if ($contadorguardados==($FilasTotales-1)) {//$FilasTotales-1, porque no empieza en la primera fila, sino desde la segun fila, porque la primera es la cabecera que no se importa.
+        /*if ($contadorguardados==($FilasTotales-1)) {//$FilasTotales-1, porque no empieza en la primera fila, sino desde la segun fila, porque la primera es la cabecera que no se importa.
           msg_verde("Hojas importadas y actualizadas correctamente.");
           //echo "<script type='text/javascript'>fnCargaSimple('rutas.php','Cargando Importador','#divPrincipal','#divmensajero');</script>";            
             fnCargaSimple("hojas.php","Mostrando Cambios","#divPrincipal","#divMensajero");
         }else{
           msg_azul("Hojas Importadas: $contadorguardados, Hojas Sin importar: <strong>".($campo-1-$FilasTotales)."</strong>");
-        }
+        }*/
     }
     break;
   case 'ActualizarHoja':

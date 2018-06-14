@@ -1,10 +1,12 @@
 <?php
 require_once("../libreria.php");
+verificarsession("No hay session iniciada");
+verificar_administrador();
 //$dbConexion=new Conexion();
 $cabecera=new PaginaPrincipal;
 echo $cabecera->FrameworkModernos();
-//echo $cabecera->FrameworkComunes();
 echo $cabecera->ArchivosEsenciales();
+//echo $cabecera->FrameworkComunes();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -20,14 +22,44 @@ echo $cabecera->ArchivosEsenciales();
       <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <a class="navbar-brand" href="#">ACC SAC</a>
+      <a class="navbar-brand" href="">ACC SAC</a>
 
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         
         
         <ul class="navbar-nav mr-auto">
-          <li class="nav-item">
+          <!--<li class="nav-item">
             <a class="nav-link active" href="#">Active</a>
+          </li>-->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Mantenimiento</a>
+            <div class="dropdown-menu">
+              <!--<a class="dropdown-item" href="#');">Contrastes</a>-->
+              <a class="dropdown-item" href="javascript:fnCargaSimple('atencioncliente.php','Cargando Importador','#divPrincipal','#divmensajero');">A. Cliente</a>
+              <!--<a class="dropdown-item" href="#">Facturacion</a>
+              <a class="dropdown-item" href="#">Cobranza/Morosidad</a>
+              <a class="dropdown-item" href="#">Otro</a>-->
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="javascript:fnCargaSimple('tipodocumento.php','Cargando Areas','#divPrincipal','#divmensajero');">Areas</a>
+              <a class="dropdown-item" href="javascript:fnCargaSimple('documentos.php','Cargando Areas','#divPrincipal','#divmensajero');">Tipos de documentos</a>
+              <a class="dropdown-item" href="javascript:fnCargaSimple('subdocumentos.php','Cargando Areas','#divPrincipal','#divmensajero');">Subtipos de documentos</a>
+            </div>
+          </li>
+          <li class="nav-item dropdown">
+            
+            <!--<a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Visitas en Campo</a>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" href="#">Contrastes</a>
+              <a class="dropdown-item" href="#">A. Cliente</a>
+              <a class="dropdown-item" href="#">Facturacion</a>
+              <a class="dropdown-item" href="#">Cobranza/Morosidad</a>
+              <a class="dropdown-item" href="#">Otro</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="#">Otro Menu</a>
+            </div>-->
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="javascript:fnCargaSimple('acdocumentos_visitacampo.php','Cargando Areas','#divPrincipal','#divmensajero');">Visitas Campo</a>
           </li>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Contratos</a>
@@ -41,12 +73,17 @@ echo $cabecera->ArchivosEsenciales();
               <a class="dropdown-item" href="javascript:fnCargaSimple('contratos.php','Cargando Importador','#divPrincipal','#divmensajero');">Ver Contratos</a>
             </div>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Enlace</a>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Configuraciones</a>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" href="javascript:fnCargaSimple('usuarios.php','Cargando Importador','#divPrincipal','#divmensajero');">Usuarios</a>
+              <a class="dropdown-item" href="../apk/app-debug.apk" download>Descargar APP</a>
+            </div>
+
           </li>
-          <li class="nav-item">
+          <!--<li class="nav-item">
             <a class="nav-link disabled" href="#">Enlace Deshabilitado</a>
-          </li>
+          </li>-->
         </ul>
 
 
@@ -69,7 +106,7 @@ echo $cabecera->ArchivosEsenciales();
           </ul>-->
           <div class="btn-group">
             <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Carlos Manrique Salinas del Padro
+              <?php echo $_SESSION["UsuarioSistema"]; ?>
             </button>
             <div class="dropdown-menu">
               <a class="dropdown-item" href="#">Mis Datos</a>
@@ -81,14 +118,10 @@ echo $cabecera->ArchivosEsenciales();
       </div>
     </nav>
 
-
-
-
-
-
-
-    <div id="divPrincipal" style="border: solid 1px red;">divPrincipal</div>
-    <div id="divMensajero">divMensajero</div>
-    <div id="divPie">divPie</div>
+    <div id="divPrincipal" style="border: solid 1px red;">
+      
+    </div>
+    <div id="divMensajero" style="clear: both;">divMensajero</div>
+    <div id="divPie" style="clear: both;">divPie</div>
   </body>
 </html>

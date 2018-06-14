@@ -3,7 +3,7 @@ CREATE PROCEDURE `ContratosMedidores_Busqueda` (
 	IN varZonaID int,
 	IN varSectorID int,
 	IN varLibroID int,
-	IN varHoja varchar(10),
+	IN varHoja int,
 	IN varDatoBuscar varchar(255),
 	IN varBuscarEn int,
 	IN varPaginaActual int,
@@ -21,7 +21,8 @@ BEGIN
 		cm.Libro as LibroID,
 		libro.NroLibro as NroLibro,
 		libro.NombreLibro as NombreLibro,
-		cm.Hoja as Hoja,
+		cm.Hoja as HojaID,
+		hoja.NroHoja as NroHoja,
 		cm.TipoID as TipoID,
 		tc.NombreTipo as NombreTipo,
 		cm.Nim as Nim,
@@ -34,6 +35,7 @@ BEGIN
 	left join Zona as zona on zona.idZona=cm.Zona
 	left join Sector as sec on sec.idSector=cm.Sector
 	left join Libro as libro on libro.idLibro=cm.Libro
+	left join Hoja as hoja on hoja.idHoja=cm.Hoja
 	left join TipoContrato as tc on tc.idTipoContrato=cm.TipoID
 	-- Aqui van las condiciones
 	where IF(varZonaID != 0 or varZonaID is null, cm.Zona=varZonaID, 1=1)
@@ -41,7 +43,7 @@ BEGIN
 			and IF(varLibroID != 0 or varLibroID is null, cm.Libro=varLibroID, 1=1)
 			and IF(varHoja != 0 or varHoja is null, cm.Hoja=varHoja, 1=1)
 			and IF(varTipoID != 0 or varTipoID is null, cm.TipoID=varTipoID, 1=1)
-			and IF(varDatoBuscar != "" and (varBuscarEn=0 or varBuscarEn is null),
+			and IF(varDatoBuscar != '' and (varBuscarEn=0 or varBuscarEn is null),
 									cm.idContratosMedidores like CONCAT('%',varDatoBuscar,'%')
 									or cm.Hoja like CONCAT('%',varDatoBuscar,'%')
 									or cm.Nim like concat('%',varDatoBuscar,'%')
