@@ -219,6 +219,8 @@ $textoJSON.="];";
                     $sqlListarSector="CALL ListarTodoAccesoLogin()";
                     $stmt=$ConexionSealDBComunicacionDispersa->prepare($sqlListarSector);
                     $stmt->execute();
+                    $color="puntorojox9.png";
+                    $numeroalatorio=0;
                     foreach($stmt as $ResultadoUsuarios) {
                         $AccesoLoginID=$ResultadoUsuarios['idAccesoLogin'];
                         $PersonalID=$ResultadoUsuarios['PersonalID'];
@@ -226,9 +228,33 @@ $textoJSON.="];";
                         $Password=$ResultadoUsuarios['Contrasenia'];
                         $TipoAcceso=$ResultadoUsuarios['TipoAcceso'];
                         $NombreCompleto=$ResultadoUsuarios['NombresCompletos'];
-                        
+                        $numeroalatorio+=1;
+                        if ($numeroalatorio>6) {
+                            $numeroalatorio=1;
+                        }
+                        switch ($numeroalatorio) {
+                            case 1:
+                                $color="puntorojox9.png";
+                                break;
+                            case 2:
+                                $color="puntoamarillox9.png";
+                                break;
+                            case 3:
+                                $color="puntoazulx9.png";
+                                break;
+                            case 4:
+                                $color="puntocelestex9.png";
+                                break;
+                            case 5:
+                                $color="puntomoradox9.png";
+                                break;
+                            case 6:
+                                $color="puntoverdex9.png";
+                                break;
+                        }
 
-                        echo "<li><a href='#' class='clPersonal' id='$AccesoLoginID'>$NombreCompleto</a></li>";
+
+                        echo "<li><a href='#' class='clPersonal' id='$AccesoLoginID'><span><img src='http://accsac.com/sistemas/seal/comunicaciondispersa/images/iconos/$color'></span>$NombreCompleto</a></li>";
                     }
                     ?>
                     <!--<li>
@@ -242,6 +268,7 @@ $textoJSON.="];";
                     </li>-->
                 </ul> 
             </li>
+
             <li><a href="#" class="Eseleccion">Eliminar Seleccion</a></li>
             <li><a href="#" class="Eseleccionpunto">Eliminar Seleccion/ Puntos</a></li>
             <li><a href="#" class="Ccolorpuntos">Cambiar color a puntos</a>
@@ -570,6 +597,7 @@ $textoJSON.="];";
         //Creando el menu de agrupamiento, con todo lo agrupado.
         fnRepresentarSeleccionado();
     }
+
     //Generador de nombre aleatorio, usado para la variable 'NombreAleatorio'
     function generarNombreAleatorio(longitud){
         var caracteres = "abcdefghijkmnpqrtuvwxyzABCDEFGHIJKLMNPQRTUVWXYZ2346789";
@@ -695,13 +723,72 @@ $textoJSON.="];";
             */
             alert(features[1].nombreMarcador);
         });
+        $(".Ccolorpuntos").off();
         $(".Ccolorpuntos").click(function() {
             //Para Cambiar colores de los puntos
         });
-        $(".clColor").click(function() {
+        $(".clColor").off();
+        $(".clColor").click(function(eventomouseclick) {
+            eventomouseclick.preventDefault();
             //Para cambiar a un color especifico
+            var color=$(this).text();
+            switch(color) {
+                case 'Amarillo':
+                    //alert("Estas en Amarillo");
+                    fnPuntosRojos(elem,'puntoamarillo');
+                    break;
+                case 'Azul':
+                    //alert("Estas en Azul");
+                    fnPuntosRojos(elem,'puntoazul');
+                    break;
+                case 'Celeste':
+                    //alert("Estas en Celeste");
+                    fnPuntosRojos(elem,'puntoceleste');
+                    break;
+                case 'Morado':
+                    //alert("Estas en Morado");
+                    fnPuntosRojos(elem,'puntomorado');
+                    break;
+                case 'Rojo':
+                    //alert("Estas en Morado");
+                    fnPuntosRojos(elem,'puntorojo');
+                    break;
+                case 'Verde':
+                    fnPuntosRojos(elem,'puntoverde');
+                    break;
+
+            }
+            
         }); 
 
+    }
+    function fnPuntosRojos(elem,color) {
+        PoliniaSelecionador=elem;
+        //MarcadoresSeleccionados, fuer previamente.
+        MarcadoresSeleccionados=new Array();
+        //features, corresponde al arreglo donde estan los markers(puntos/contratos)
+        features.forEach(function(feature) {
+            //containsLocation, verifica si existe un determinado punto dentro de un poligono containsLocation(posicion,poligono)
+            if (google.maps.geometry.poly.containsLocation(feature.position, PoliniaSelecionador)) {
+                MarcadoresSeleccionados.push(feature.nombreMarcador);
+                feature.type=color;
+                console.log(markers.length +":OOOOO:" + feature.type)
+            }
+        });
+        DeleteMarkers();
+        MostrarMarcadores();
+        //MostrarMarcadores();
+        var contadorIncoincidente=0;
+        //Verificando que no haya el mismo ID para que no sea repetido
+        for(var i = 0; i < PuntosSelecionados.length; i++){
+            if(PuntosSelecionados[i].idTrabajador == PoliniaSelecionador.NombrePolilinea){
+                PuntosSelecionados[i].contratos=MarcadoresSeleccionados;
+            }else{
+                contadorIncoincidente+=1;
+            }
+        }
+        //Creando el menu de agrupamiento, con todo lo agrupado.
+        fnRepresentarSeleccionado();
     }
     //el poligono selecionado se asigna a un trabjador con todos los contratos que estan dentro
     function fnAsignarPolilinea(elemento,idTrabajador,NuevoIDTrabajador,NombreTrabajador) {
@@ -774,4 +861,3 @@ $textoJSON.="];";
     <script async defer
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCyeNELJuURtBnMQR5Josan3KL7luObvlg&callback=initMap">
     </script>
-

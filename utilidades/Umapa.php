@@ -81,9 +81,23 @@ if (!empty($_POST["hdValor"])) {
                 $textoJSON.="dato3:'".$worksheet->getCellByColumnAndRow(9, $row)->getValue()."',";
                 $textoJSON.="dato4:'".$worksheet->getCellByColumnAndRow(10, $row)->getValue()."'";
                 $textoJSON.="},";
-                //echo '</tr>' . PHP_EOL;
+                # creamos la copia
+                $textoJSON2.="{position:new google.maps.LatLng(".(float)$worksheet->getCellByColumnAndRow(2, $row)->getValue().", ".(float)$worksheet->getCellByColumnAndRow(3, $row)->getValue()."),";
+                $textoJSON2.="type:'puntorojo',";
+                $textoJSON2.="label:'',";
+                $textoJSON2.="nombreMarcador:'".$worksheet->getCellByColumnAndRow(4, $row)->getValue()."',";
+                $textoJSON2.="suministroNro:'".$worksheet->getCellByColumnAndRow(1, $row)->getValue()."',";
+                $textoJSON2.="tipoDoc:'".$worksheet->getCellByColumnAndRow(5, $row)->getValue()."',";
+                $textoJSON2.="fechaE:'".$worksheet->getCellByColumnAndRow(6, $row)->getValue()."',";
+                $textoJSON2.="dato1:'".$worksheet->getCellByColumnAndRow(7, $row)->getValue()."',";
+                $textoJSON2.="dato2:'".$worksheet->getCellByColumnAndRow(8, $row)->getValue()."',";
+                $textoJSON2.="dato3:'".$worksheet->getCellByColumnAndRow(9, $row)->getValue()."',";
+                $textoJSON2.="dato4:'".$worksheet->getCellByColumnAndRow(10, $row)->getValue()."'";
+                $textoJSON2.="},";
             }
             $textoJSON.="];";
+            # duplicamos el Json
+            $textoJSON2.="];";
             //echo '</table>' . PHP_EOL; 
         }
         unlink($destino);
@@ -442,9 +456,9 @@ if (!empty($_POST["hdValor"])) {
         var json = JSON.stringify(o);
         console.log(o);
         //Las posiciones(nro de contrato) que se cargaran dinamicamente
-        //features = eval(<?php echo json_encode($ListaContratos); ?>);
+        //features = eval(<?php //echo json_encode($ListaContratos); ?>);
         features = eval(<?php echo json_encode($textoJSON); ?>);
-        
+        features2= eval(<?php echo json_encode($textoJSON2); ?>);
         //Funcion que muestra todas las ubicaciones(Markers)
         MostrarMarcadores();
         /*Funciones Internas de la Clase*/
@@ -462,8 +476,6 @@ if (!empty($_POST["hdValor"])) {
                 dato2:dato2,
                 dato3:dato3,
                 dato4:dato4,
-
-
             });
             var contentString = '<div id="content">'+
             '<div id="siteNotice">'+
